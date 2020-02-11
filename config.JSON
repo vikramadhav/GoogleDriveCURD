@@ -1,0 +1,6 @@
+{
+  "Scopes": "https://www.googleapis.com/auth/drive",
+  "Client_Secret_File": "credentials.json",
+  "Application_Name": "VikramGoogleTransfer",
+  "FolderName":"IphoneBackUp"
+}

@@ -1,0 +1,77 @@
+from __future__ import print_function
+
+
+class FolderOperation:
+
+    def __init__(self, drive_service):
+        self.drive_service = drive_service
+        self.folderMimeTYpe = 'application/vnd.google-apps.folder'
+
+    def create(self, name):
+        query = f"name='{name}' and mimeType='{self.folderMimeTYpe}'"
+        print(f"Making request for {query}")
+        results = self.drive_service.files().list(q=query).execute()
+        items = results.get('files', [])
+        if items:
+            print('Found Similiar Name Folders , Skipping Creation ')
+            for file in results.get('files', []):
+                print('Found file: %s (%s)' %
+                      (file.get('name'), file.get('id')))
+        else:
+            print('No Folder Found by that Name ,Createing New Folder')
+            file_metadata = {
+                'name': name,
+                'mimeType': self.folderMimeTYpe
+            }
+            file = self.drive_service.files().create(
+                body=file_metadata, fields='id').execute()
+            print('Folder ID: %s' % file.get('id'))
+            items.append(file)
+        return items
+
+    def listFolder(self, name=None) -> []:
+        page_token = None
+        folderlist = []
+        query = f"mimeType='{self.folderMimeTYpe}'"
+
+        if name:
+            query = (f"{query} and name ='{name}'")
+
+        while True:
+            print(f"Making Request with {query} and PageToken:{page_token}")
+            response = self.drive_service.files().list(
+                q=query, spaces='drive', fields='nextPageToken, files(id,name)').execute()
+
+            for file in response.get('files', []):
+                print('Found file: %s (%s)' %
+                      (file.get('name'), file.get('id')))
+                folderlist.append(file)
+            page_token = response.get('nextPageToken', None)
+            if page_token is None:
+                break
+            print()
+        return folderlist
+
+    def removeFolder(self, folderId=None, folderName=None) -> None:
+        if not folderId and not folderName:
+            print("No Vaild argument Found for deletion ! Aborting")
+            return None
+        elif  folderName:
+            folderList = self.listFolder(folderName)
+            for ids in folderList:
+                self.__removeFolderById(ids['id'])
+        else:
+            self.__removeFolderById(folderId)
+
+    def __removeFolderById(self, folderId) -> None:
+        print(f"Making Delete Folder Request for {folderId}")
+        response = self.drive_service.files().delete(fileId=folderId).execute()
+        if not response:
+            print(f"Folder:{folderId} is deleted sucessfully")
+        else:
+            print(f"Error: {response}")
+
+    def EmptyTrash(self) -> None:
+        print("Cleaning Trash")
+        self.drive_service.files().emptyTrash().execute()
+        print("Trash Cleaned")
