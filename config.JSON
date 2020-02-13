@@ -2,5 +2,8 @@
   "Scopes": "https://www.googleapis.com/auth/drive",
   "Client_Secret_File": "credentials.json",
   "Application_Name": "VikramGoogleTransfer",
-  "FolderName":"IphoneBackUp"
+  "FolderName": "IphoneBackUp",
+  "LocalFolder": "C:\\Users\\vikram.verma\\OneDrive - Shell\\Documents\\My Pictures\\2020-02-08 - Copy",
+  "AfterCopyFolder": "C:\\Users\\vikram.verma\\OneDrive - Shell\\Documents\\My Pictures\\TransferredFolder",
+  "DownLoadFolder":""
 }

@@ -1,4 +1,12 @@
 from __future__ import print_function
+import os
+import math
+
+
+def file_size(fname):
+    import os
+    statinfo = os.stat(fname)
+    return statinfo.st_size
 
 
 class FolderOperation:
@@ -56,7 +64,7 @@ class FolderOperation:
         if not folderId and not folderName:
             print("No Vaild argument Found for deletion ! Aborting")
             return None
-        elif  folderName:
+        elif folderName:
             folderList = self.listFolder(folderName)
             for ids in folderList:
                 self.__removeFolderById(ids['id'])
@@ -75,3 +83,18 @@ class FolderOperation:
         print("Cleaning Trash")
         self.drive_service.files().emptyTrash().execute()
         print("Trash Cleaned")
+
+    def getLocalFolder(self, path) -> {}:
+        file_paths = {}
+        counter = 0
+        for root, directories, files in os.walk(path):
+            for filename in files:
+                # Join the two strings in order to form the full filepath.
+                filepath = os.path.join(root, filename)
+                file_paths[filename] = filepath  # Add it to the list.
+        for fileName in file_paths:
+            counter += 1
+            absPath = file_paths[fileName]
+            print("FileNumber: %s - %s - FileSize: %s MB" %
+                  (counter, absPath, round((file_size(absPath)/1024.0)/1024.0, 2)))
+        return file_paths
