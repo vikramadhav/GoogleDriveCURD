@@ -40,11 +40,13 @@ class FilesOperation:
                     body=file_metadata,  media_body=media, fields='id,name').execute()
                 print('File ID: %s with name:%s Uploaded' %
                       (file.get('id'), file.get('name')))
+                return True
             except HttpError as err:
                 print(err)
-                return
+                return False
         else:
             print("File Already exist in same folder ! Uploading Aborted")
+            return False
 
     def moveFileToFolder(self, filename, destination):
         print("Moving file %s to %s" % (filename, destination))
@@ -70,11 +72,12 @@ class FilesOperation:
 
             items = results.get('files', [])
             if not items:
-                print('No files found.')
+                print('No DUplication found.')
+                return []
             else:
                 print('Files:')
                 for item in items:
-                    print('File Found with name {0} and Id  ({1})'.format(
+                    print('Duplicate File Found with name {0} and Id  ({1})'.format(
                         item['name'], item['id']))
 
             return items
@@ -84,6 +87,7 @@ class FilesOperation:
                 return []
             else:
                 print(err)
+                return [{0}]
 
     def downloadFile(self, file_id, fileName):
         request = drive_service.files().get_media(fileId=file_id)

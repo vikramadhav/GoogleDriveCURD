@@ -39,9 +39,8 @@ def main():
 
         localCopies = folderoperation.getLocalFolder(data['LocalFolder'])
         for key, value in localCopies.items():
-            fileOperation.uploadFile(value, parentFolderid)
-
-        fileOperation.moveFileToFolder(value, f"{data['AfterCopyFolder']}\\{key}")
+           if fileOperation.uploadFile(value, parentFolderid):
+                fileOperation.moveFileToFolder(value, f"{data['AfterCopyFolder']}\\{key}")
 
 if __name__ == '__main__':
     main()
