@@ -72,7 +72,7 @@ class FilesOperation:
 
             items = results.get('files', [])
             if not items:
-                print('No DUplication found.')
+                print('No Duplication found.')
                 return []
             else:
                 print('Files:')

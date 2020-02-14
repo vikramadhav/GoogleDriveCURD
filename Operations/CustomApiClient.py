@@ -9,6 +9,7 @@ class CustomApiClient:
         credentials= authInst.getCredentials()
 
         self.http= credentials.authorize(httplib2.Http())
+        self.http.redirect_codes = set(self.http.redirect_codes)- {308}
         self.drive_service= discovery.build('drive', 'v3', http=self.http)
 
 
