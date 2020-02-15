@@ -54,68 +54,84 @@ class FilesOperation:
 
     def listFiles(self, size, fileName=None, fileId=None, parentid=None):
         query = ''
+        page_token=None
+        filelist=[]
         if not fileId and not fileName and not parentid:
             print("No Valid Parameter are found. Aborting!")
         if parentid:
-            query += f"parents in '{parentid}' and "
+            query += f"parents in '{parentid}' "
 
         if fileName:
+            if query:
+                 query +=" and "
             query += f"name='{fileName}' "
         elif fileId:
+            if query:
+                 query +=" and "
             query += f"id='{fileId}' '"
 
         query += " and mimeType != 'application/vnd.google-apps.folder' and trashed=false"
+        while True:
+            print(f"Making Request with {query} and PageToken:{page_token}")
+            try:
+                response = self.drive_service.files().list(q=query, spaces='drive',pageSize=size, fields="nextPageToken,files(id, name)",pageToken=page_token).execute()
+
+                items = response.get('files', [])
+                if not items:
+                    print('No Files found.')
+                    return []
+                else:
+                    filelist+=items
+                    print('Files:')
+                    for item in items:
+                        print('Files Found with name {0} and Id  ({1})'.format(
+                            item['name'], item['id']))
+                page_token = response.get('nextPageToken', None)
+                
+                if page_token is None:
+                    break
+
+            except HttpError as err:
+                if err.resp.status in [404]:
+                    print(err)
+                    return []
+                else:
+                    print(err)
+                    return [{0}]
+        return filelist
+          
+
+    def downloadFile(self, file_id,fileName):
         try:
-            results = self.drive_service.files().list(q=query, spaces='drive',
+            request = self.drive_service.files().get_media(fileId=file_id)
+            fh = io.BytesIO()
+            downloader = MediaIoBaseDownload(fh, request)
+            done = False
+            while done is False:
+                status, done = downloader.next_chunk()
+                print("Download %d%%." % int(status.progress() * 100))
 
-                                                      pageSize=size, fields="nextPageToken,files(id, name)").execute()
+            downloadFilePath = f"{data['DownLoadFolder']}\\{fileName}"
 
-            items = results.get('files', [])
-            if not items:
-                print('No Duplication found.')
-                return []
-            else:
-                print('Files:')
-                for item in items:
-                    print('Duplicate File Found with name {0} and Id  ({1})'.format(
-                        item['name'], item['id']))
+            print(f"Saving File {downloadFilePath}")
+            with io.open(downloadFilePath, 'wb') as f:
+                fh.seek(0)
+                f.write(fh.read())
+            print(f"Saved File {downloadFilePath}")
+            return True
+        except Exception as ex:
+            print(ex)
+            return False
 
-            return items
-        except HttpError as err:
-            if err.resp.status in [404]:
-                print(err)
-                return []
-            else:
-                print(err)
-                return [{0}]
 
-    def downloadFile(self, file_id, fileName):
-        request = drive_service.files().get_media(fileId=file_id)
-        fh = io.BytesIO()
-        downloader = MediaIoBaseDownload(fh, request)
-        done = False
-        while done is False:
-            status, done = downloader.next_chunk()
-            print("Download %d%%." % int(status.progress() * 100))
+    def deleteFile(self, fileid,fileName):
+        print(f"Deleting file from Drive with Id={fileid} and FileName={fileName}")
+        try:
+            response=self.drive_service.files().delete(fileId=fileid)
+            return True
+        except Exception as ex:
+            print(ex)
+            return False
 
-        downloadFilePath = f"{data['DownLoadFolder']}\\{fileName}"
 
-        print(f"Saving File {downloadFilePath}")
-        with io.open(downloadFilePath, 'wb') as f:
-            fh.seek(0)
-            f.write(fh.read())
-        print(f"Saved File {downloadFilePath}")
-
-    # def deleteFile(self, files):
-    #     while(len(files) > 0):
-    #         batch = self.drive_service.new_batch_http_request(
-    #             callback=self.callback)
-    #         batchSize = min(len(files), 99)
-    #         for i in range(batchSize):
-    #             print("Deleting", files[0])
-    #             batch.add(self.service.files().delete(
-    #                 fileId=files[0]
-    #             ))
-    #             del files[0]
-
-    #         batch.execute(http=self.http)
+           

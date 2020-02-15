@@ -13,7 +13,7 @@ class Auth:
         self.CLIENT_SECRET_FILE = CLIENT_SECRET_FILE
         self.APPLICATION_NAME = APPLICATION_NAME
 
-        self.args = argparser.parse_args()
+        self.args = argparse.ArgumentParser().parse_args()
         self.args.noauth_local_webserver = True
         
 
@@ -34,11 +34,11 @@ class Auth:
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request(),self.args)
+                creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json',self.SCOPES)
-                creds = flow.run_local_server(port=0)
+                creds = flow.run_local_server(port=0,args=self.args)
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)

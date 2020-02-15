@@ -11,7 +11,7 @@ from Operations.Files import FilesOperation
 import json
 
 # Open the JSOn configuration file and Fetch Data
-with open(os.path.join(os.getcwd(),'config.json')) as config_file:
+with open(os.path.join(os.getcwd(), 'config.json')) as config_file:
     data = json.load(config_file)
 
 
@@ -27,11 +27,19 @@ def main():
         parentfolder = folderoperation.create(data['FolderName'])
         if parentfolder:
             parentFolderid = parentfolder[0].get('id')
+            # Download Files
+            fileList=fileOperation.listFiles(parentid=parentFolderid,size=100)
 
-        localCopies = folderoperation.getLocalFolder(data['LocalFolder'])
-        for key, value in localCopies.items():
-           if fileOperation.uploadFile(value, parentFolderid):
-                fileOperation.moveFileToFolder(value, f"{data['AfterCopyFolder']}\\{key}")
+            for file in fileList:
+                if fileOperation.downloadFile(file['id'],file['name']):
+                    # Delete After download 
+                    fileOperation.deleteFile(file['id'],file['name'])
+                    break
+
+        # localCopies = folderoperation.getLocalFolder(data['LocalFolder'])
+        # for key, value in localCopies.items():
+        #    if fileOperation.uploadFile(value, parentFolderid):
+        #         fileOperation.moveFileToFolder(value, f"{data['AfterCopyFolder']}\\{key}")
 
 if __name__ == '__main__':
     main()

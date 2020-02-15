@@ -48,7 +48,7 @@ class FolderOperation:
         while True:
             print(f"Making Request with {query} and PageToken:{page_token}")
             response = self.drive_service.files().list(
-                q=query, spaces='drive', fields='nextPageToken, files(id,name)').execute()
+                q=query, spaces='drive', fields='nextPageToken, files(id,name)',pageToken=page_token).execute()
 
             for file in response.get('files', []):
                 print('Found file: %s (%s)' %
