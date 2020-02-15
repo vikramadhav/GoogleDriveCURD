@@ -3,22 +3,22 @@ import os
 import shutil
 import io
 import json
-from googleapiclient.errors import HttpError
-from apiclient import discovery
-from apiclient.http import MediaFileUpload, MediaIoBaseDownload
+from googleapiclient.errors  import HttpError
+from googleapiclient.http  import MediaFileUpload
+from googleapiclient.http  import MediaIoBaseDownload
 
 
 # Open the JSOn configuration file and Fetch Data
-with open('config.json') as config_file:
+with open(os.path.join(os.getcwd(),'config.json')) as config_file:
     data = json.load(config_file)
 
 
 class FilesOperation:
-    def __init__(self, drive_service, http):
+    def __init__(self, drive_service):
         self.drive_service = drive_service
         self.imageMimeType = 'image/jpeg'
         self.UnknownMimeType = 'application/vnd.google-apps.unknown'
-        self.http = http
+        
 
     def callback(self, request_id, response, exception):
         if exception:
@@ -106,16 +106,16 @@ class FilesOperation:
             f.write(fh.read())
         print(f"Saved File {downloadFilePath}")
 
-    def deleteFile(self, files):
-        while(len(files) > 0):
-            batch = self.drive_service.new_batch_http_request(
-                callback=self.callback)
-            batchSize = min(len(files), 99)
-            for i in range(batchSize):
-                print("Deleting", files[0])
-                batch.add(self.service.files().delete(
-                    fileId=files[0]
-                ))
-                del files[0]
+    # def deleteFile(self, files):
+    #     while(len(files) > 0):
+    #         batch = self.drive_service.new_batch_http_request(
+    #             callback=self.callback)
+    #         batchSize = min(len(files), 99)
+    #         for i in range(batchSize):
+    #             print("Deleting", files[0])
+    #             batch.add(self.service.files().delete(
+    #                 fileId=files[0]
+    #             ))
+    #             del files[0]
 
-            batch.execute(http=self.http)
+    #         batch.execute(http=self.http)
