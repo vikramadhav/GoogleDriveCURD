@@ -2,13 +2,6 @@ from __future__ import print_function
 import os
 import math
 
-
-def file_size(fname):
-    import os
-    statinfo = os.stat(fname)
-    return statinfo.st_size
-
-
 class FolderOperation:
 
     def __init__(self, drive_service):

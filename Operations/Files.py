@@ -3,14 +3,10 @@ import os
 import shutil
 import io
 import json
-from googleapiclient.errors  import HttpError
-from googleapiclient.http  import MediaFileUpload
-from googleapiclient.http  import MediaIoBaseDownload
-
-
-# Open the JSOn configuration file and Fetch Data
-with open(os.path.join(os.getcwd(),'config.json')) as config_file:
-    data = json.load(config_file)
+from Utilities import *
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseDownload
 
 
 class FilesOperation:
@@ -18,7 +14,6 @@ class FilesOperation:
         self.drive_service = drive_service
         self.imageMimeType = 'image/jpeg'
         self.UnknownMimeType = 'application/vnd.google-apps.unknown'
-        
 
     def callback(self, request_id, response, exception):
         if exception:
@@ -57,8 +52,8 @@ class FilesOperation:
 
     def listFiles(self, size, fileName=None, fileId=None, parentid=None):
         query = ''
-        page_token=None
-        filelist=[]
+        page_token = None
+        filelist = []
         if not fileId and not fileName and not parentid:
             print("No Valid Parameter are found. Aborting!")
         if parentid:
@@ -66,31 +61,32 @@ class FilesOperation:
 
         if fileName:
             if query:
-                 query +=" and "
+                query += " and "
             query += f"name='{fileName}' "
         elif fileId:
             if query:
-                 query +=" and "
+                query += " and "
             query += f"id='{fileId}' '"
 
         query += " and mimeType != 'application/vnd.google-apps.folder' and trashed=false"
         while True:
             print(f"Making Request with {query} and PageToken:{page_token}")
             try:
-                response = self.drive_service.files().list(q=query, spaces='drive',pageSize=size, fields="nextPageToken,files(id, name)",pageToken=page_token).execute()
+                response = self.drive_service.files().list(q=query, spaces='drive', pageSize=size,
+                                                           fields="nextPageToken,files(id, name)", pageToken=page_token).execute()
 
                 items = response.get('files', [])
                 if not items:
                     print('No Files found.')
                     return []
                 else:
-                    filelist+=items
+                    filelist += items
                     print('Files:')
                     for item in items:
                         print('Files Found with name {0} and Id  ({1})'.format(
                             item['name'], item['id']))
                 page_token = response.get('nextPageToken', None)
-                
+
                 if page_token is None:
                     break
 
@@ -102,9 +98,8 @@ class FilesOperation:
                     print(err)
                     return [{0}]
         return filelist
-          
 
-    def downloadFile(self, file_id,fileName):
+    def downloadFile(self, file_id, fileName):
         try:
             request = self.drive_service.files().get_media(fileId=file_id)
             fh = io.BytesIO()
@@ -126,15 +121,12 @@ class FilesOperation:
             print(ex)
             return False
 
-
-    def deleteFile(self, fileid,fileName):
-        print(f"Deleting file from Drive with Id={fileid} and FileName={fileName}")
+    def deleteFile(self, fileid, fileName):
+        print(
+            f"Deleting file from Drive with Id={fileid} and FileName={fileName}")
         try:
-            response=self.drive_service.files().delete(fileId=fileid)
+            response = self.drive_service.files().delete(fileId=fileid)
             return True
         except Exception as ex:
             print(ex)
             return False
-
-
-           
