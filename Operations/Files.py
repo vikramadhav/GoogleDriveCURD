@@ -25,6 +25,9 @@ class FilesOperation:
             print("Exception:", exception)
 
     def uploadFile(self, filePath, parentid):
+
+        print(f"Uploading File with {filePath}")
+
         f = open(filePath, "r+")
         fName = os.path.basename(f.name)
         isExist = self.listFiles(1, fileName=fName, parentid=parentid)
