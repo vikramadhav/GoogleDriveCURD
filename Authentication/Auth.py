@@ -36,7 +36,6 @@ class Auth:
                 else:
                     flow = InstalledAppFlow.from_client_secrets_file(
                         'credentials.json', self.SCOPES,redirect_uri='urn:ietf:wg:oauth:2.0:oob')
-                   #creds = flow.run_local_server(port=0, args=self.args)
                     auth_url, _ = flow.authorization_url(prompt='consent')
                     print('Please go to this URL: {}'.format(auth_url))
                     # The user will get an authorization code. This code is used to get the

@@ -13,5 +13,5 @@ COPY ./credentials.json /application/credentials.json
 
 
 RUN pip install -r /application/requirement.txt
-
-CMD [ "python", "main.py" ]
+#if defult Running is required
+#CMD [ "python", "main.py" ]
