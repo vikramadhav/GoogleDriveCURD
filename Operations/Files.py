@@ -109,7 +109,7 @@ class FilesOperation:
                 status, done = downloader.next_chunk()
                 print("Download %d%%." % int(status.progress() * 100))
 
-            downloadFilePath = f"{data['DownLoadFolder']}\\{fileName}"
+            downloadFilePath = f"{configdata['DownLoadFolder']}\\{fileName}"
 
             print(f"Saving File {downloadFilePath}")
             with io.open(downloadFilePath, 'wb') as f:
@@ -126,6 +126,7 @@ class FilesOperation:
             f"Deleting file from Drive with Id={fileid} and FileName={fileName}")
         try:
             response = self.drive_service.files().delete(fileId=fileid)
+            print(response)
             return True
         except Exception as ex:
             print(ex)
