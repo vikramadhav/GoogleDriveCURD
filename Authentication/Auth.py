@@ -6,6 +6,8 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import google.auth.exceptions
+import threading
+import time
 
 
 class Auth:
@@ -15,7 +17,6 @@ class Auth:
         self.APPLICATION_NAME = APPLICATION_NAME
         self.args = getArguments()
         self.args.noauth_local_webserver = True
-       
 
     def getCredentials(self):
 
@@ -35,15 +36,15 @@ class Auth:
                     creds.refresh(Request())
                 else:
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        'credentials.json', self.SCOPES,redirect_uri='urn:ietf:wg:oauth:2.0:oob')
+                        'credentials.json', self.SCOPES, redirect_uri='urn:ietf:wg:oauth:2.0:oob')
                     auth_url, _ = flow.authorization_url(prompt='consent')
                     print('Please go to this URL: {}'.format(auth_url))
                     # The user will get an authorization code. This code is used to get the
                     # access token.
                     code = input('Enter the authorization code: ')
-                    token=flow.fetch_token(code=code)
+                    token = flow.fetch_token(code=code)
                     print(token)
-                    creds=flow.credentials
+                    creds = flow.credentials
                 # Save the credentials for the next run
                 with open('token.pickle', 'wb') as token:
                     pickle.dump(creds, token)
@@ -53,6 +54,10 @@ class Auth:
             if ex.__class__ == google.auth.exceptions.RefreshError:
                 if os.path.exists('token.pickle'):
                     os.remove('token.pickle')
-                    
+
             else:
                 return None
+
+    
+
+    

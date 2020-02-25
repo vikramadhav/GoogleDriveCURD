@@ -7,6 +7,7 @@ import Authentication.Auth
 from Operations.FolderOperation import FolderOperation
 from Operations.CustomApiClient import CustomApiClient
 from Operations.Files import FilesOperation
+import threading
 
 
 # Build Client Dependencies
@@ -39,13 +40,16 @@ class Initiator:
             self.__uploadLogic()
 
     def __downloadLogic(self):
-         # Download Files
-        fileList = self.fileOperation.listFiles(
-            parentid=self.get_ParentId(), size=100)
-        for file in fileList:
-            if self.fileOperation.downloadFile(file['id'], file['name']):
-                    # Delete After download
-                self.fileOperation.deleteFile(file['id'], file['name'])
+        while(True):
+             # Download Files
+            fileList = self.fileOperation.listFiles(
+                parentid=self.get_ParentId(), size=100)
+            counter=fileList.count()    
+            for file in fileList:
+                print(f"File Counter: {counter}")
+                if self.fileOperation.downloadFile(file['id'], file['name']):
+                        # Delete After download
+                    self.fileOperation.deleteFile(file['id'], file['name'])
 
     def __uploadLogic(self):
         localCopies = self.folderoperation.getLocalFolder(
