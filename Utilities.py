@@ -1,16 +1,15 @@
 import os
 import json
 import argparse
+import pybreaker
 
 # Provide the File Size
-
-
 def file_size(fname):
     statinfo = os.stat(fname)
     return statinfo.st_size
 
-
 configdata = None
+db_breaker = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60)
 
 # Open the JSOn configuration file and Fetch Data
 def readJsonData():
