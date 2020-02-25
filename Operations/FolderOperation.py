@@ -81,7 +81,7 @@ class FolderOperation:
     def getLocalFolder(self, path) -> {}:
         file_paths = {}
         counter = 0
-        for root, directories, files in os.walk(path):
+        for root,dire,files in os.walk(path):
             for filename in files:
                 # Join the two strings in order to form the full filepath.
                 filepath = os.path.join(root, filename)

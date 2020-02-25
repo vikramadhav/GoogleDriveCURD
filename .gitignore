@@ -134,3 +134,4 @@ credentials.json
 token.pickle
 pyenv.cfg
 .vscode/
+Scripts/
