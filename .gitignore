@@ -133,3 +133,4 @@ dmypy.json
 credentials.json
 token.pickle
 pyenv.cfg
+.vscode/
