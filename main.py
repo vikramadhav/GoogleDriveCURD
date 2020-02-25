@@ -54,7 +54,7 @@ class Initiator:
             if self.fileOperation.uploadFile(value, self.get_ParentId()):
                 self.fileOperation.moveFileToFolder(
                     value, f"{configdata['AfterCopyFolder']}\\{key}")
-                break
+                
 
     def main(self):
         Initiator.__execute(self)

@@ -125,7 +125,7 @@ class FilesOperation:
         print(
             f"Deleting file from Drive with Id={fileid} and FileName={fileName}")
         try:
-            response = self.drive_service.files().delete(fileId=fileid)
+            response = self.drive_service.files().delete(fileId=fileid).execute()
             print(response)
             return True
         except Exception as ex:

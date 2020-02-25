@@ -12,9 +12,10 @@ class CustomApiClient:
 
     def __init__(self, data):
         self.data = data
+        self.initialize()
         
 
-    @db_breaker
+    #@db_breaker
     def initialize(self):
         try:
             authInst = Auth(
