@@ -12,12 +12,14 @@ class CustomApiClient:
 
     def __init__(self, data):
         self.data = data
-        
+        self.drive_service=None
         self.authInst = Auth(
                 self.data["Scopes"], self.data["Client_Secret_File"], self.data["Application_Name"])
         self.initialize() 
         threading.Thread(target=self.maintaince, daemon=True).start()
-        
+     
+    def get_driveClient(self):
+        return self.drive_service   
 
     #@db_breaker
     def initialize(self,isforced=False):
@@ -28,9 +30,6 @@ class CustomApiClient:
         except Exception as ex:
             print(ex)
             
-
-    def get_driveClient(self):
-        return self.drive_service
 
     property(get_driveClient)
 
