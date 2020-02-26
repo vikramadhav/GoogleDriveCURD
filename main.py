@@ -8,6 +8,7 @@ from Operations.FolderOperation import FolderOperation
 from Operations.CustomApiClient import CustomApiClient
 from Operations.Files import FilesOperation
 import threading
+import time
 
 
 # Build Client Dependencies
@@ -42,10 +43,13 @@ class Initiator:
     def __downloadLogic(self):
         while(True):
              # Download Files
+            print("Going in Sleep")
+            time.sleep(30)
             fileList = self.fileOperation.listFiles(
-                parentid=self.get_ParentId(), size=100)
-            counter=fileList.count()    
+                parentid=self.get_ParentId(), size=500)
+            counter=len(fileList)   
             for file in fileList:
+                counter -=1
                 print(f"File Counter: {counter}")
                 if self.fileOperation.downloadFile(file['id'], file['name']):
                         # Delete After download
