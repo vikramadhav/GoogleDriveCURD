@@ -12,16 +12,17 @@ class CustomApiClient:
 
     def __init__(self, data):
         self.data = data
-        self.initialize() 
+        
         self.authInst = Auth(
                 self.data["Scopes"], self.data["Client_Secret_File"], self.data["Application_Name"])
+        self.initialize() 
         threading.Thread(target=self.maintaince, daemon=True).start()
         
 
     #@db_breaker
-    def initialize(self):
+    def initialize(self,isforced=False):
         try:
-            credentials = self.authInst.getCredentials()
+            credentials = self.authInst.getCredentials(isforced)
             self.drive_service = build('drive', 'v3', credentials=credentials)
            
         except Exception as ex:
@@ -34,9 +35,12 @@ class CustomApiClient:
     property(get_driveClient)
 
     def maintaince(self):
+        print("Calling Maintance")
         while True:
             time.sleep(300)
-            self.initialize()
+            self.initialize(True)
+            print("Called From Maintance")
+
            
 
 

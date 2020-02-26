@@ -44,8 +44,9 @@ class Initiator:
              # Download Files
             fileList = self.fileOperation.listFiles(
                 parentid=self.get_ParentId(), size=100)
-            counter=fileList.count()    
+            counter=len(fileList)    
             for file in fileList:
+                counter-=1
                 print(f"File Counter: {counter}")
                 if self.fileOperation.downloadFile(file['id'], file['name']):
                         # Delete After download

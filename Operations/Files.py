@@ -25,7 +25,7 @@ class FilesOperation:
 
         f = open(filePath, "r+")
         fName = os.path.basename(f.name)
-        isExist = self.listFiles(1, fileName=fName, parentid=parentid)
+        isExist = None #self.listFiles(1, fileName=fName, parentid=parentid)
         if not isExist:
             file_metadata = {'name': fName, 'title': fName,
                              "parents": [parentid]}

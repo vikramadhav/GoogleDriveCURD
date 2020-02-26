@@ -18,7 +18,7 @@ class Auth:
         self.args = getArguments()
         self.args.noauth_local_webserver = True
 
-    def getCredentials(self):
+    def getCredentials(self,isforced=False):
 
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -30,6 +30,8 @@ class Auth:
             if os.path.exists('token.pickle'):
                 with open('token.pickle', 'rb') as token:
                     creds = pickle.load(token)
+            if isforced:
+                creds.refresh(Request())
             # If there are no (valid) credentials available, let the user log in.
             if not creds or not creds.valid:
                 if creds and creds.expired and creds.refresh_token:
